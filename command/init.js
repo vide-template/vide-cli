@@ -5,21 +5,22 @@ const fs = require('fs')
 const path = require('path')
 const exec = require('child_process').exec
 const co = require('co')
-const config = require('../templates')
 const chalk = require('chalk')
 const inquirer = require('inquirer')
 const ora = require('ora')
 const { renderString, renderTemplateFile } = require('template-file')
 const glob = require('glob')
 const copy = require('directory-copy')
+const userHome = require('user-home');
 
 // 下载资源
-function download (repo, des) {
+function download (repo, downloadName) {
   return new Promise((resolve, reject) => {
+    let des = path.join(userHome, '.vide-templates', downloadName)
     // 先验证文件是否在有效期
     let info = null;
     try {
-      info = fs.statSync(path.join(__dirname, '..', des))
+      info = fs.statSync(des)
       let lastModify = new Date().setTime(info.mtime)
       if (lastModify + 12 * 60 * 60 * 1000 > Date.now()) {
         resolve(true)
@@ -27,9 +28,8 @@ function download (repo, des) {
       }
     } catch (e) {}
     // 如果没有，则进行新的下载
-    let spinner = ora(`Downloading ${des}`)
+    let spinner = ora(`Downloading ${downloadName}`)
     spinner.start()
-    des = path.join(__dirname, '..', des)
     downloadGitRepo(repo, des, function (error) {
       spinner.stop()
       resolve(error ? false : true)
@@ -57,7 +57,7 @@ function replaceTemplate (pattern, data) {
 // 生成模板文件
 function generateTemplate (type, name) {
   return new Promise((resolve, reject) => {
-    let src = path.join(__dirname, '..', 'templates', type)
+    let src = path.join(userHome, '.vide-templates', 'templates', type)
     let dest = path.join(process.cwd(), name)
     copy({src, dest}, function () {
       resolve(true)
@@ -72,7 +72,7 @@ module.exports = () => {
       console.log('Please check your network,tks!')
       return
     }
-    let promptsObject = require('../prompts/index.js')
+    let promptsObject = require(path.join(userHome,'.vide-templates','prompts/index.js'))
     // 提示输入
     let answers = yield inquirer.prompt(promptsObject.prompts)
     let type = answers['pluginType']

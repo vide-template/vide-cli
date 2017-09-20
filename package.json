@@ -1,0 +1,20 @@
+{
+  "name": "vide-cli",
+  "version": "0.0.1",
+  "description": "vide-cli",
+  "author": "vic wang",
+  "bin": {
+    "vide-cli": "bin/vide-cli"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.1.0",
+    "co": "^4.6.0",
+    "commander": "^2.11.0",
+    "directory-copy": "^0.1.0",
+    "download-git-repo": "^1.0.1",
+    "inquirer": "^3.2.3",
+    "ora": "^1.3.0",
+    "template-file": "^3.0.1"
+  }
+}
